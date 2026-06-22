@@ -1,0 +1,26 @@
+{
+  "name": "emergent-prompt-builder",
+  "version": "2026.06.17",
+  "last_standardized_at": "2026.06.17 GMT-3",
+  "description": "Vibecode skill for emergent.sh: multi-agent full-stack (web+mobile) builder, MongoDB stack, phase-based prompting with credit control.",
+  "license": "MIT",
+  "origin_url": "https://github.com/AndreAlmeidaDC/emergent-prompt-builder",
+  "origin_git_url": "https://github.com/AndreAlmeidaDC/emergent-prompt-builder.git",
+  "family": "vibecode-prompt-builder",
+  "platform": "emergent.sh",
+  "update_policy": "version-check.md",
+  "declared_capabilities": {
+    "network_egress": {
+      "expected": false,
+      "reason": "Prompt-generation skill; performs no network calls."
+    },
+    "subprocess": {
+      "expected": false,
+      "reason": "No subprocess execution."
+    },
+    "dependency_install": {
+      "expected": false,
+      "reason": "No package installation."
+    }
+  }
+}
