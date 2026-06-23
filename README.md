@@ -122,6 +122,14 @@ então a skill força a especificação explícita de cor, fonte e ícone para c
 **A skill se conecta ao emergent automaticamente?**
 Não. Ela gera os prompts e você cola no emergent. Funciona em qualquer chat de IA.
 
+**Preciso ativar acessibilidade?**
+Não. Acessibilidade é opcional e fica desligada por padrão. Logo no início do fluxo a
+skill pergunta se o app terá interface web usada por terceiros ou se precisa atender a
+requisito de acessibilidade. Se for uso interno, protótipo ou app da própria equipe,
+responda que não e siga sem nenhum peso extra. Se responder que sim, a skill passa a
+tratar acessibilidade como requisito de toda a UI, com base em
+`references/accessibility-web.md`.
+
 ## Estrutura do repositório
 
 ```
@@ -131,6 +139,7 @@ references/
   platform-emergent.md            # Multi-agente, MongoDB, fases, créditos, mobile vs a0.dev
   archetypes.md                   # Guia de escolha de plataforma
   version-check.md                # Protocolo de auto-atualização
+  accessibility-web.md            # Acessibilidade web (opcional, ver gate na Fase 1)
 templates/
   PRD.md                          # Template de requisitos de produto
   DATA_MODEL.md                   # Template de modelo de dados
@@ -166,6 +175,8 @@ que importa e mantemos independência onde importa.
 
 ## Família vibecode
 
+| Skill | Plataforma | Melhor para |
+|---|---|---|
 | [lovable-prompt-builder](https://github.com/AndreAlmeidaDC/lovable-prompt-builder) | Lovable | App web full-stack com fluxo guiado passo a passo |
 | [bolt-prompt-builder](https://github.com/AndreAlmeidaDC/bolt-prompt-builder) | bolt.new | App web full-stack com brief único e controle total |
 | [v0-prompt-builder](https://github.com/AndreAlmeidaDC/v0-prompt-builder) | v0 (Vercel) | Componentes React/shadcn de alta qualidade |
