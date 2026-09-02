@@ -1,227 +1,163 @@
-# Platform Reference — emergent.sh
+# Platform Reference — Emergent
 
-emergent.sh é um app builder full-stack com arquitetura multi-agente. Diferente da
-maioria, ele funciona como um time de engenharia autônomo: agentes especializados
-planejam a arquitetura, desenham a UI, estruturam o banco, conectam APIs, testam e
-fazem deploy. Faz apps web e mobile (Expo/React Native), com código que é seu (GitHub).
+**Última verificação:** 2026-09-02, documentação oficial do Emergent.
 
-> **Pré-requisito:** complete as Fases 1 a 4 do CORE antes de usar esta referência.
-> O emergent usa o Fluxo Principal do CORE (app completo). Para o modelo de dados,
-> atenção: a stack é MongoDB, não Supabase — o vocabulário de modelagem muda.
+Emergent oferece agentes principais selecionáveis, sub-agentes com contexto filtrado, preview, testes, GitHub, deployment, rollback/forking, MCP, custom agents e um Mobile Agent baseado em Expo. Disponibilidade, nomes, planos, custos e limites mudam; revalide antes de decidir.
 
----
+Fontes oficiais principais:
 
-## A diferença central: arquitetura multi-agente
+- https://help.emergent.sh/first-app
+- https://help.emergent.sh/context-limits
+- https://help.emergent.sh/github-integration
+- https://help.emergent.sh/prompting-basics
+- https://help.emergent.sh/mcp-model-context-protocol
+- https://help.emergent.sh/mobile-app-development
+- https://help.emergent.sh/pre-deployment-health-check
 
-O emergent não é um gerador de código que responde prompt a prompt. São cinco agentes
-coordenados (Architect, Designer, Developer, Integration, Product Manager), sendo o
-Product Manager uma camada de QA que valida a saída contra os requisitos antes do deploy.
+## Escolha do agente
 
-O que isso muda na prática para você:
+A documentação atual apresenta agentes com perfis distintos, como E1, E1.5, E2, Prototype e Mobile. Não codifique uma tabela eterna. Na data do uso:
 
-- O **Architect Agent faz perguntas de esclarecimento** quando o pedido é ambíguo. Isso
-  é bom, mas especificar bem desde o início economiza créditos e elimina ciclos de revisão.
-- O emergent tem **debugging autônomo**: quando o código gerado tem erro, ele detecta,
-  analisa a causa e aplica a correção sem esperar você. Você não precisa diagnosticar
-  cada erro, mas precisa revisar se a correção foi na direção certa.
-- O modo de prompt ideal é **"dê um objetivo bem especificado e deixe o time executar"**,
-  não micro-gerenciar cada linha.
+1. confirme opções disponíveis na conta/projeto;
+2. escolha pelo tipo de trabalho e risco;
+3. use o agente mais simples que consiga sustentar o contrato;
+4. registre por que foi escolhido;
+5. troque somente com checkpoint, savepoint e impacto de contexto conhecido.
 
----
+Heurística:
 
-## Stack fixa: MongoDB, não Supabase (atenção na modelagem)
+- **Prototype:** validar direção ou interface descartável;
+- **E1:** desenvolvimento full-stack normal com testes;
+- **E1.5:** sessão longa que exige continuidade;
+- **E2:** arquitetura/bug difícil que justifica investigação mais intensa;
+- **Mobile:** projeto Expo/React Native;
+- **custom/pro mode:** fluxo especializado com contrato explícito.
 
-Esta é a divergência mais importante em relação a outras plataformas de app web. O
-emergent usa:
+Esses nomes são claims voláteis, não identidade permanente da skill.
 
-- Frontend: React / Next.js
-- Backend: Node.js / FastAPI
-- **Banco: MongoDB** (orientado a documentos, não relacional)
-- Mobile: Expo / React Native
+## Contrato de autonomia
 
-**Impacto na Fase 2 (modelagem de dados) do CORE:**
+Antes de iniciar, declare:
 
-Você modela em **coleções e documentos**, não em tabelas e linhas. Não há RLS (Row Level
-Security) do Postgres — a segurança de acesso a dados é feita via autenticação e
-verificação de papel (role) no backend, não via policies de banco.
+- objetivo e fora de escopo;
+- decisões que o agente pode tomar;
+- ações que exigem aprovação;
+- dados e credenciais permitidos;
+- orçamento ou limite operacional;
+- sensores obrigatórios;
+- checkpoint/savepoint;
+- stop conditions;
+- escalation conditions;
+- rollback.
 
-```
-Modelo de dados (MongoDB):
-- Coleção: users
-  { _id, email, passwordHash, name, role, createdAt }
-- Coleção: projects
-  { _id, ownerId (ref users), name, status, createdAt }
-- Coleção: tasks
-  { _id, projectId (ref projects), title, priority, dueDate, done }
+Exemplo de stop condition:
 
-Relações: por referência (ownerId, projectId apontam para _id de outra coleção).
-Segurança: cada endpoint verifica auth + role antes de ler/escrever.
-Validação: defina schema de validação por coleção (campos obrigatórios, tipos).
-```
+> Pare quando duas iterações consecutivas não produzirem nova evidência diagnóstica, repetirem a mesma falha, exigirem ampliar escopo/credencial/custo ou contradisserem o contrato.
 
-Não fale em "tabelas", "SQL", "migrations" ou "RLS" nos prompts do emergent — fale em
-coleções, documentos, referências e validação de schema.
+Isso substitui regras cegas como “duas tentativas” ou “quatro prompts”.
 
----
+## Contexto, sub-agentes e forking
 
-## Perguntas adicionais de intake (Fase 1 do CORE)
+Sub-agentes recebem contexto filtrado; o agente principal continua responsável por coerência. Em projetos longos:
 
-Após as perguntas genéricas do CORE, adicione:
+- mantenha brief, decisões e estado em arquivos/GitHub;
+- salve em marcos verificáveis;
+- faça fork quando exploração precisa divergir sem contaminar a linha estável;
+- compare alternativas por critérios, não por entusiasmo do agente;
+- reancore quando o contexto perder fatos, escopo ou decisões.
 
-12. O produto é **web, mobile, ou ambos**? (o emergent faz os dois no mesmo projeto)
-13. Vai precisar de **deploy hospedado** desde já? (cada app hospedado custa ~50
-    créditos/mês — é uma decisão de custo, não trivial)
-14. Quais **integrações** externas? (Stripe, Google Sheets, Airtable, Slack, APIs via MCP)
-15. Pretende **exportar o código para o GitHub** e evoluir fora da plataforma? (o emergent
-    permite; vale planejar a estrutura pensando nisso)
+## Stack e arquitetura
 
----
+Não presuma uma única stack para todos os modos. O Mobile Agent documenta stack fixa Expo/React Native + FastAPI + MongoDB; outros agentes e integrações podem produzir arquiteturas diferentes.
 
-## Output de Branding (Fase 3 do CORE — formato emergent)
+Em projeto existente, inspecione. Em greenfield, escolha a menor arquitetura que entrega valor. Defina banco, auth, APIs, filas, storage e observabilidade somente quando o comportamento exigir.
 
-O acabamento visual é o ponto fraco reconhecido do emergent: ele entrega lógica sólida,
-mas o visual sai genérico se você não for explícito. Por isso o bloco de branding precisa
-ser mais detalhado aqui do que em plataformas com forte viés visual.
+## GitHub e savepoints
 
-```
-ESPECIFICAÇÃO VISUAL — [Nome do Projeto]
+GitHub é a fonte durável para trabalho relevante:
 
-Cores (seja explícito, o agente não adivinha bem):
-  Primária:    #[hex]  — uso: [CTAs, links]
-  Secundária:  #[hex]  — uso: [elementos de apoio]
-  Fundo:       #[hex]
-  Texto:       #[hex]
-  Sidebar:     #[hex]  (ex: "dark sidebar com accent roxo")
+1. branch isolada;
+2. checkpoint antes de mudança arriscada;
+3. commits pequenos;
+4. testes antes de merge;
+5. PR para revisão;
+6. rollback praticável.
 
-Tipografia:
-  Fonte de títulos: [nome exato]
-  Fonte de corpo:   [nome exato]
+Não deixe uma longa conversa ser a única memória do projeto.
 
-Ícones: [biblioteca específica, ex: Lucide / Heroicons]
-Estilo: [minimalista / corporativo / etc — com referências concretas]
-Dark mode: [sim / não]
+## Integrações, MCP e Universal Key
 
-INSTRUÇÃO PARA O EMERGENT:
-Aplique exatamente esta especificação visual. Não substitua cores, fontes ou ícones
-por padrões genéricos. Mantenha consistência visual entre todas as telas.
-```
+MCP e integrações ampliam o alcance do agente. Para cada ferramenta, registre:
 
----
+- servidor/provedor e owner;
+- operações read/write;
+- dados e escopos;
+- secrets;
+- limites de custo;
+- confirmação humana;
+- idempotência e rollback;
+- logs/auditoria.
 
-## Estrutura de prompt do emergent (fases + limite de 4)
+Nunca cole secret em texto de exemplo ou prompt. Use mecanismo seguro da plataforma e ambiente de teste.
 
-O emergent rende melhor com o modelo que a documentação dele recomenda, e que é
-compatível com o CORE: **dividir em fases sequenciais e limitar cada fase a no máximo
-4 prompts curtos, atômicos e testáveis.**
+## Mobile Agent
 
-### Prompt inicial (a "visão + primeira fase")
+Quando o modo for Mobile:
 
-```
-# [Nome do Projeto] — Emergent Build
+- declare Expo/React Native desde o início;
+- modele telas, navegação, safe areas, permissões e offline;
+- conheça a stack fixa documentada;
+- teste preview sem confundi-lo com build nativo;
+- exporte/salve no GitHub;
+- use EAS/dev builds e aparelhos para recursos nativos;
+- TestFlight/Play internal testing antes da produção;
+- OTA somente dentro dos limites do runtime;
+- store submission separada e aprovada.
 
-## Visão (end state)
-[Descrição concreta do produto pronto. O que faz, para quem, resultado final.
-Concreto, não aspiracional.]
+## Prompt inicial
 
-## Plataforma
-[Web / Mobile / Ambos]
+```text
+Antes de construir, confirme o agente atual e produza um plano.
 
-## Stack (padrão emergent)
-React/Next.js + Node.js/FastAPI + MongoDB. [Mobile: Expo/React Native, se aplicável.]
+Objetivo: [resultado]
+Modo: [prototype/web/mobile/custom]
+Estado: [novo/existente]
+Escopo e fora de escopo: [itens]
+Autonomia permitida: [decisões]
+Aprovação exigida: [ações]
+Stop/escalation conditions: [regras]
+Verificação: [sensores]
+Git checkpoint: [branch/savepoint]
 
-## Modelo de dados (coleções MongoDB)
-[Coleções, campos, referências — do Fase 2]
-
-## Autenticação e papéis
-[email/senha, social login; papéis e o que cada um acessa]
-
-## Especificação visual
-[Bloco de branding da Fase 3]
-
-## Integrações
-[Stripe, Slack, etc — se aplicável]
-
-## FASE 1 — [nome da fase] (máximo 4 prompts)
-Primeiro: me dê um plano de implementação para esta fase.
-Depois execute apenas o primeiro item. Aguardo verificar antes do próximo.
-
-Instruções de comportamento:
-- Trabalhe em fases. Não construa tudo de uma vez.
-- Uma feature impactante por vez.
-- Se um bug não for resolvido em 2 tentativas, pare e me peça orientação
-  em vez de tentar indefinidamente (economia de créditos).
+Não implemente até apresentar fatos observados, riscos, plano e custo/impacto provável.
 ```
 
-### Loop por fase
+## Prompt de fase
 
-Para cada fase seguinte, peça primeiro o **plano de implementação**, depois execute item
-a item, no máximo 4 por fase, verificando cada um antes de avançar.
+```text
+Execute somente [slice] do plano aprovado.
 
----
+Preserve: [itens]
+Arquivos/recursos permitidos: [lista]
+Contrato: [comportamento]
+Dados: [sintéticos/ambiente]
+Sensores: [testes]
+Stop conditions: [regras]
 
-## Gestão de créditos (específico e importante no emergent)
+Não publique nem use credenciais/produção.
+Ao terminar, mostre diff, evidência nova, resultado e próximo checkpoint.
+```
 
-O emergent é reconhecidamente faminto de créditos, e o deploy ativo custa por volta de
-50 créditos/mês por app. Trate cada build como um sprint:
+## Verificação independente
 
-- **Planeje antes de promptar.** Toda a Fase 1-4 do CORE (intake, modelagem, branding,
-  validação) acontece no seu chat de IA, de graça, antes de gastar crédito no emergent.
-- **Peça sempre o plano de implementação antes de executar.** "Me dê o plano, não execute
-  ainda" custa pouco e evita execução na direção errada.
-- **Regra das 2 tentativas.** Se o agente não resolve um bug em duas tentativas, pare,
-  limpe o contexto, reformule ou intervenha manualmente. Não deixe auto-retry infinito
-  queimando créditos.
-- **Decida o deploy conscientemente.** Manter o app hospitado tem custo recorrente. Se é
-  protótipo, considere não manter o deploy ativo entre sessões de demonstração.
+O health check e os testes do agente são sensores, não prova absoluta. Para risco material:
 
----
+- use uma segunda sessão/agente ou revisão humana;
+- verifique requisitos e diff sem confiar no resumo do autor;
+- rode testes determinísticos;
+- teste auth, dados, pagamentos e integrações negativamente;
+- valide fluxo real e rollback.
 
-## Mobile no emergent vs a0.dev
+## Claims voláteis
 
-Os dois fazem mobile com Expo/React Native. A diferença para a sua escolha:
-
-- Use o **emergent** se você quer um produto **full-stack** (web + mobile + backend
-  robusto no mesmo projeto), ou um app mobile com backend e integrações complexas.
-- Use o **a0.dev** se você quer **só um app mobile**, indie, rápido, focado em store, sem
-  a camada full-stack.
-
-Se o usuário só quer mobile e nada de web/backend pesado, considere indicar o a0.dev.
-
----
-
-## Artefatos de Reancoragem (Fase 5.5 do CORE)
-
-Quando o emergent divergir do plano, recole na sessão:
-- A Visão (end state) e a fase atual
-- O modelo de dados (coleções MongoDB)
-- A especificação visual (se o problema for estético)
-- O plano de implementação da fase em andamento
-- A instrução das 2 tentativas
-
----
-
-## Código é seu (ponto forte a aproveitar)
-
-Diferente de plataformas com lock-in, o emergent dá o código via GitHub e tem extensão
-de VS Code para puxar o projeto localmente, ajustar e devolver. Recomendações:
-
-- Conecte o GitHub desde o início para ter o código versionado fora da plataforma.
-- Para customização pesada ou produção, exporte e trabalhe parte no seu ambiente.
-- Isso reduz o risco de depender só dos créditos e da disponibilidade da plataforma.
-
----
-
-## Limitações e Gotchas do emergent
-
-- **Créditos.** O maior ponto de atenção. Deploy ativo ~50 créditos/mês; o salto de plano
-  Standard ($20) para Pro ($200) é grande. Planeje uso.
-- **Visual genérico.** Lógica é forte, acabamento visual é fraco. Compense com especificação
-  visual explícita e revisão estética.
-- **Preview web de 30 min por sessão.** Inconveniente em sessões longas — planeje validar
-  em janelas.
-- **Loops em prompt ambíguo.** O debugging autônomo é bom, mas prompt mal especificado
-  pode gerar loops. Especificar bem e usar a regra das 2 tentativas evita.
-- **Código de produção precisa de revisão.** Escala, performance e segurança do código
-  gerado devem ser revisadas antes de produção séria.
-- **Suporte lento fora do tier alto.** Sistema de ticket; respostas não são imediatas em
-  planos menores.
+Não grave preços, créditos, contexto, tiers, modelos ou prazos de suporte. Consulte documentação oficial no momento da decisão e identifique a data.
