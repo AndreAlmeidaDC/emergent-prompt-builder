@@ -1,26 +1,20 @@
 {
   "name": "emergent-prompt-builder",
-  "version": "2026.06.23",
-  "last_standardized_at": "2026.06.23 GMT-3",
-  "description": "Vibecode skill for emergent.sh: multi-agent full-stack (web+mobile) builder, MongoDB stack, phase-based prompting with credit control.",
+  "version": "2026.09.02",
+  "last_standardized_at": "2026-09-02 GMT-3",
+  "description": "Workflow skill for current Emergent agents, web/mobile builds, context and forking, GitHub, MCP, testing, convergence and release safety.",
   "license": "MIT",
   "origin_url": "https://github.com/AndreAlmeidaDC/emergent-prompt-builder",
   "origin_git_url": "https://github.com/AndreAlmeidaDC/emergent-prompt-builder.git",
   "family": "vibecode-prompt-builder",
-  "platform": "emergent.sh",
-  "update_policy": "version-check.md",
+  "platform": "Emergent",
+  "maturity": "beta",
+  "platform_claims_verified_at": "2026-09-02",
+  "supported_project_modes": ["prototype", "web-full-stack", "mobile-expo", "existing-project-repair", "custom-agent-workflow"],
+  "confirmation_required_for": ["deploy", "production-data", "credentialed-integration", "payment", "external-communication", "destructive-action"],
   "declared_capabilities": {
-    "network_egress": {
-      "expected": false,
-      "reason": "Prompt-generation skill; performs no network calls."
-    },
-    "subprocess": {
-      "expected": false,
-      "reason": "No subprocess execution."
-    },
-    "dependency_install": {
-      "expected": false,
-      "reason": "No package installation."
-    }
+    "network_egress": {"expected": true, "reason": "The host may inspect current Emergent documentation, projects, GitHub and integrations."},
+    "subprocess": {"expected": true, "reason": "Exported projects and mobile release flows may run scoped Git, test, build and EAS commands."},
+    "dependency_install": {"expected": true, "reason": "Project and release dependencies may be installed after manifest and scope review."}
   }
 }

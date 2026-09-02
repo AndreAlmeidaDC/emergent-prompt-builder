@@ -1,62 +1,46 @@
 ---
 name: emergent-prompt-builder
 description: >
-  Skill para construir apps full-stack (web e mobile) com emergent.sh, o app builder
-  de arquitetura multi-agente. Conduz intake, modelagem de dados em MongoDB, branding
-  explicito e geracao de prompts por fases com limite de escopo, aproveitando o time de
-  agentes autonomos do emergent e controlando o consumo de creditos. Use quando o usuario
-  quiser construir um produto full-stack ou um app com backend robusto usando o emergent.
+  Guides planning, building, repairing, testing and releasing web or mobile products with the current Emergent agents. Use when the user mentions Emergent, E1/E1.5/E2, Prototype, Mobile Agent, Emergent GitHub, forking, MCP, custom agents or asks for structured Emergent prompts. Choose agent and autonomy according to the task, then control convergence, cost and release risk.
 license: MIT
 ---
 
-# emergent.sh Prompt Builder
+# Emergent Prompt Builder
+
+This skill treats Emergent as an agentic development platform with selectable main agents, focused sub-agents, GitHub, testing, deployment, forking, MCP and mobile workflows. It does not freeze the platform into a fictional fixed team or arbitrary prompt-count rules.
 
 ## Origin version check
 
-At the start of a meaningful use, check whether this skill has a newer upstream version.
-The canonical source is:
+Canonical source:
 
 ```text
 https://github.com/AndreAlmeidaDC/emergent-prompt-builder
 ```
 
-If a newer version exists, summarize what changed and ask the user whether to update
-before proceeding. Never self-update silently. For the detailed protocol, read
-`references/version-check.md`.
+At meaningful use, follow `references/version-check.md`. Never self-update silently.
 
-*Autor: André Almeida*
+## Load order
 
----
+1. Read `references/vibecode-core.md`.
+2. Read `references/platform-emergent.md`.
+3. Use `references/archetypes.md` only when platform choice is open.
+4. Select the smallest agent and autonomy profile that protects quality.
 
-## Quando usar esta skill
+## Non-negotiable boundaries
 
-Use esta skill quando o usuario mencionar emergent, emergent.sh, ou quiser construir um
-produto full-stack (web + mobile + backend) com geracao multi-agente autonoma, ou um app
-com backend robusto e integracoes. O emergent usa stack MongoDB (nao Supabase) e entrega
-codigo que e seu via GitHub.
+- Verify current agent availability and project state before recommending a model.
+- Define stop/escalation conditions; never count retries blindly.
+- Keep GitHub/savepoints and rollback current during long runs.
+- Review code and tests independently from the producing agent when risk is material.
+- Do not paste secrets into prompts or let agents perform payment, production, public communication or destructive actions without explicit approval.
+- Treat credits, plans, context limits and model names as volatile claims.
 
-Se nao tiver certeza se esta e a plataforma certa, leia `references/archetypes.md`.
+## Output
 
----
+Return only what is needed: agent-selection memo, project brief, phase plan, atomic follow-up, convergence checkpoint, reanchoring prompt, verification prompt or release checklist.
 
-## Como esta skill funciona
+## Change history
 
-Esta skill usa um processo compartilhado (vibecode CORE) + detalhes especificos do emergent:
-
-1. **Carregue `references/vibecode-core.md`** — processo completo de especificacao e
-   execucao (intake, modelagem, branding, validacao, geracao, reancoragem).
-
-2. **Carregue `references/platform-emergent.md`** — arquitetura multi-agente, stack MongoDB,
-   modelo de prompt por fases com limite de 4, gestao de creditos, e especificidades do emergent.
-
-3. Execute o Fluxo Principal do CORE (app completo) usando os detalhes do emergent.
-   Atencao especial: modelagem em MongoDB (colecoes/documentos, nao tabelas/RLS) e
-   especificacao visual explicita (o acabamento visual e o ponto fraco do emergent).
-
----
-
-## Historico de Alteracoes
-
-| Data | Versao | Alteracoes |
+| Date | Version | Change |
 |---|---|---|
-| 2026.06.17 | 2026.06.17 | Criacao da skill no formato vibecode: CORE compartilhado + referencia especifica do emergent.sh. |
+| 2026-09-02 | 2026.09.02 | Rebuilt for selectable Emergent agents, context/forking, GitHub, MCP, mobile, convergence control, independent verification and volatile cost claims. |
